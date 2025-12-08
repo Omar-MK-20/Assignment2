@@ -1,6 +1,10 @@
 const path = require('node:path');
-const fsP = require('node:fs/promises');
 const fs = require('node:fs');
+const fileSysPromise = require('node:fs/promises');
+const os = require('node:os');
+const Event = require('node:events');
+const event = new Event();
+
 
 //#region 1. Write a function that logs the current file path and directory.
 
@@ -114,12 +118,38 @@ function joinPaths(filePath1, filePath2)
 
 //#region 10. Write a function that deletes a file asynchronously.
 
-async function deleteFile(filePath)
+function deleteFile(filePath)
+{
+    fs.unlink(filePath, (error) =>
+    {
+        if (error)
+        {
+            console.log(error);
+        }
+        else
+        {
+            console.log(`The ${getFileName(filePath)} is deleted.`);
+        }
+    });
+
+}
+
+// deleteFile("folder1/folder2/test.txt");
+
+//#endregion
+
+
+//#region 11. Write a function that creates a folder synchronously.
+
+function createFolder(path)
 {
     try
     {
-        await fsP.unlink(filePath);
-        console.log(`The ${getFileName(filePath)} is deleted.`);
+        const result = fs.mkdirSync(path, { recursive: true });
+        if (result)
+        {
+            console.log("Success");
+        }
     }
     catch (error)
     {
@@ -128,23 +158,112 @@ async function deleteFile(filePath)
 
 }
 
-// deleteFile("folder1/folder2/test.txt")
+// createFolder("./folder1/folder2/test/");
 
 //#endregion
 
 
-//#region 11. Write a function that creates a folder synchronously.
+//#region 12. Create an event emitter that listens for a "start" event and logs a welcome message.
 
-// function createFolder(path)
-// {
-//     fs.mkdir()
-// }
+function start()
+{
+    console.log("Welcome event triggered!");
+}
+
+event.on("start", start);
+
+// event.emit("start")
+
+//#endregion
 
 
+//#region 13. Emit a custom "login" event with a username parameter.
+
+function login(username)
+{
+    console.log(`User logged in: ${username}`);
+}
+
+event.on("login", login);
+
+// event.emit("login", "Ahmed")
+
+//#endregion
 
 
+//#region 14. Read a file synchronously and log its contents.
+
+async function readFile(filePath)
+{
+    try
+    {
+        const data = await fileSysPromise.readFile(filePath, { encoding: "utf-8" });
+        console.log(`the file content => "${data}"`);
+    }
+    catch (error)
+    {
+        console.log(error);
+    }
+}
+
+// readFile("./notes.txt")
+
+//#endregion
 
 
+//#region 15. Write asynchronously to a file.
+
+function writeToFile(filePath, content)
+{
+    fs.writeFile(filePath, content, (error) =>
+    {
+        if (error)
+        {
+            console.log(error);
+        }
+        else
+        {
+            console.log("success");
+        }
+    });
+}
+
+
+// writeToFile("./async.txt", "Async save")
+
+//#endregion
+
+
+//#region 16. Check if a directory exists.
+
+function doesExist(filePath)
+{
+    try
+    {
+        const result = fs.existsSync(filePath);
+        console.log(result);
+    }
+    catch (error)
+    {
+        console.log(error);
+    }
+}
+
+// doesExist("./notes.txt")
+
+//#endregion
+
+
+//#region 17. Write a function that returns the OS platform and CPU architecture.
+
+function sysInfo()
+{
+    return { Platform: os.platform(), Arch: os.arch() };
+}
+
+// console.log(sysInfo())
+
+//#endregion
 
 
 
